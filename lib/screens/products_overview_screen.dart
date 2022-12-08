@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ProductsOverviewScreen extends StatelessWidget {
-  const ProductsOverviewScreen({super.key});
+import '../widgets/products_gridveiw.dart';
 
+class ProductsOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shop'),
+      ),
+      body: ProductsGridView(),
+    );
   }
 }
