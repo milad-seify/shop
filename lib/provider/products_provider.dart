@@ -10,7 +10,7 @@ class ProductsProvider with ChangeNotifier {
       description: 'A red shirt - it is pretty red!',
       price: 29.99,
       imageUrl:
-          'https://cache.mrporter.cproduts_providerom/variants/images/20346390235928949/in/w1200_q60.jpg',
+          'https://www.iranpooshak.com/wp-content/uploads/2019/07/x-1.jpg',
       isFavorite: false,
     ),
     Product(
@@ -42,9 +42,29 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
+  // bool _showFavoritesOnly = false;
+
   List<Product> get item {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((product) => product.isFavorite).toList();
+    // } else {
     return [..._items];
+    // }
   }
+
+  List<Product> get favoritesItem {
+    return _items.where((proFave) => proFave.isFavorite).toList();
+  }
+
+  // void favoritesProductsFilter() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void allProductsFilter() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 
   Product findById(String id) {
     return item.firstWhere((i) => i.id == id);

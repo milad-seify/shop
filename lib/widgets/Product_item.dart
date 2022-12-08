@@ -3,38 +3,38 @@ import 'package:provider/provider.dart';
 
 import '../provider/product.dart';
 import '../screens/product_detail_screen.dart';
+import 'image_url_show.dart';
+import '/const_data.dart';
 
 class ProductItem extends StatelessWidget {
+  const ProductItem({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final Product product = Provider.of<Product>(context);
+    final Product product = Provider.of<Product>(context, listen: false);
 
     return Card(
       //for only border radius use cliprrect
       elevation: 6.0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-        side: BorderSide(
-          color: Colors.blueGrey,
-          strokeAlign: StrokeAlign.outside,
-        ),
-      ),
+      shape: shapeCard,
       child: GridTile(
         footer: SizedBox(
           height: 37,
           child: GridTileBar(
             backgroundColor: Colors.black.withOpacity(0.7),
-            leading: IconButton(
-              tooltip: 'Add to Your favorite',
-              icon: Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
-              color: Theme.of(context).colorScheme.tertiary,
-              onPressed: () {
-                product.toggleFavoriteStatus();
-              },
+            leading: Consumer<Product>(
+              //when just part of your widget need change you could add consumer for rebuild just this section
+              builder: ((ctx, productChange, child) => IconButton(
+                    tooltip: 'Add to Your favorite',
+                    icon: Icon(product.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border),
+                    color: Theme.of(context).colorScheme.tertiary,
+                    onPressed: () {
+                      product.toggleFavoriteStatus();
+                    },
+                  )),
+              //child: You can add whats u need in this widget thats Never Change , like TextWidget for title somewhere,this is a tiny optimization
             ),
             title: Text(
               product.title,
@@ -51,10 +51,7 @@ class ProductItem extends StatelessWidget {
           ),
         ),
         child: GestureDetector(
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
-          ),
+          child: ImageUrlShow(product: product),
           onTap: () => Navigator.of(context)
               .pushNamed(ProductDetailScreen.routeName, arguments: product.id),
         ),
