@@ -10,3 +10,12 @@ const RoundedRectangleBorder shapeCard = RoundedRectangleBorder(
     strokeAlign: StrokeAlign.outside,
   ),
 );
+
+RoundedRectangleBorder borderCartScreen = RoundedRectangleBorder(
+  side: const BorderSide(
+    color: Colors.orange,
+    width: 2.0,
+    strokeAlign: StrokeAlign.outside,
+  ),
+  borderRadius: BorderRadius.circular(20.0),
+);
