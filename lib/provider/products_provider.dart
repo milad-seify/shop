@@ -19,7 +19,7 @@ class ProductsProvider with ChangeNotifier {
       description: 'A nice pair of trousers.',
       price: 59.99,
       imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
+          'https://titigoll.com/wp-content/uploads/2022/02/photo_2022-02-08_10-29-11.webp',
       isFavorite: false,
     ),
     Product(
@@ -73,5 +73,15 @@ class ProductsProvider with ChangeNotifier {
   void addProduct() {
     //   _items.add();
     notifyListeners();
+  }
+
+  String imageUrl(String title) {
+    for (int i = 0; i < _items.length; i++) {
+      if (_items[i].title == title) {
+        return _items[i].imageUrl;
+      }
+    }
+
+    return 'Image Url Can\'t Find';
   }
 }

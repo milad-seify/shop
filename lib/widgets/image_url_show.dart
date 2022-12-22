@@ -33,7 +33,7 @@ class ImageUrlShow extends StatelessWidget {
         style: const TextStyle(
             color: Colors.red, backgroundColor: Colors.black, letterSpacing: 2),
       ),
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
     );
   }
 }

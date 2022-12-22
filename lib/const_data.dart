@@ -13,7 +13,7 @@ const RoundedRectangleBorder shapeCard = RoundedRectangleBorder(
 
 RoundedRectangleBorder borderCartScreen = RoundedRectangleBorder(
   side: const BorderSide(
-    color: Colors.orange,
+    color: Colors.deepOrange,
     width: 2.0,
     strokeAlign: StrokeAlign.outside,
   ),

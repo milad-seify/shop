@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 
 import './screens/products_overview_screen.dart';
 import './provider/cart.dart';
+import 'provider/orders.dart';
 import './screens/product_detail_screen.dart';
 import 'provider/products_provider.dart';
 import './screens/cart_screen.dart';
+import './screens/orders_detail_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
+        ),
+        ChangeNotifierProvider(
+          create: ((context) => Orders()),
         ),
       ],
       child: MaterialApp(
@@ -47,12 +52,14 @@ class MyApp extends StatelessWidget {
               overflow: TextOverflow.fade,
             ),
           ),
+          scaffoldBackgroundColor: Colors.yellow[100],
         ),
         home: const ProductsOverviewScreen(),
         routes: {
           ProductDetailScreen.routeName: (context) =>
               const ProductDetailScreen(),
           CartScreen.routeName: (context) => const CartScreen(),
+          OrdersScreen.routeName: (context) => const OrdersScreen(),
         },
       ),
     );
