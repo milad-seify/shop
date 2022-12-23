@@ -13,7 +13,6 @@ class OrdersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var orderData = Provider.of<Orders>(context);
     return Scaffold(
-      backgroundColor: Colors.orange[100],
       appBar: AppBar(title: const Text('Your Orders')),
       drawer: const AppDrawer(),
       body: ListView.builder(

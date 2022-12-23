@@ -23,33 +23,27 @@ class CartScreen extends StatelessWidget {
             elevation: 10.0,
             margin: const EdgeInsets.all(15),
             shape: borderCartScreen,
+            color: Colors.white30,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 const Padding(
                     padding: EdgeInsets.all(5),
                     child: Text(
-                      'Total',
+                      'Total :',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     )),
                 const Spacer(),
                 Chip(
+                  elevation: 5.0,
                   label: Text('\$${cart.totalAmount.toStringAsFixed(2)}'),
                   backgroundColor:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                      Theme.of(context).colorScheme.primary.withOpacity(0.4),
                   padding: const EdgeInsets.all(11.0),
                 ),
                 const SizedBox(width: 5.0),
                 TextButton(
-                  onPressed: () {
-                    Provider.of<Orders>(context, listen: false).addOrder(
-                      cart.cartItems.values.toList(),
-                      cart.totalAmount,
-                    );
-
-                    cart.clear();
-                  },
                   style: ButtonStyle(
                     elevation: MaterialStateProperty.all(3.0),
                     backgroundColor:
@@ -58,6 +52,14 @@ class CartScreen extends StatelessWidget {
                       borderCartScreen,
                     ),
                   ),
+                  onPressed: () {
+                    Provider.of<Orders>(context, listen: false).addOrder(
+                      cart.cartItems.values.toList(),
+                      cart.totalAmount,
+                    );
+
+                    cart.clear();
+                  },
                   child: const Text('ORDER NOW'),
                 ),
                 const SizedBox(width: 6.0)
@@ -79,6 +81,11 @@ class CartScreen extends StatelessWidget {
             }),
           ))
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          //TODO : go to payment page
+        },
       ),
     );
   }

@@ -26,7 +26,7 @@ class _OrderItemState extends State<OrderItem> {
 
     return Card(
       margin: const EdgeInsets.all(10.0),
-      color: Colors.amber,
+      color: Colors.blueGrey,
       shape: borderCartScreen,
       child: Column(
         children: <Widget>[

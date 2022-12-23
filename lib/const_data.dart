@@ -19,3 +19,15 @@ RoundedRectangleBorder borderCartScreen = RoundedRectangleBorder(
   ),
   borderRadius: BorderRadius.circular(20.0),
 );
+
+RoundedRectangleBorder snackBarShape = RoundedRectangleBorder(
+  side: BorderSide(
+    color: Colors.teal.shade900,
+    width: 3.0,
+    strokeAlign: StrokeAlign.inside,
+  ),
+  borderRadius: const BorderRadius.only(
+    topLeft: Radius.circular(30.0),
+    topRight: Radius.circular(30.0),
+  ),
+);

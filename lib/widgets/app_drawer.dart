@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/orders_detail_screen.dart';
+import '../screens/user_edit_products_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -8,7 +9,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.amber[100],
+      backgroundColor: Colors.teal[200],
       elevation: 5.0,
       child: Column(
         children: <Widget>[
@@ -24,17 +25,23 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).popAndPushNamed('/');
             },
           ),
-          const Divider(
-            thickness: 1.0,
-            color: Colors.orange,
-            indent: 12.0,
-            endIndent: 12.0,
-          ),
           ListTile(
             leading: const Icon(Icons.payment),
             title: const Text('payment'),
             onTap: () {
               Navigator.of(context).popAndPushNamed(OrdersScreen.routeName);
+            },
+          ),
+          Divider(
+            thickness: 1.0,
+            color: Colors.teal[900],
+          ),
+          ListTile(
+            leading: const Icon(Icons.payment),
+            title: const Text('edit'),
+            onTap: () {
+              Navigator.of(context)
+                  .popAndPushNamed(UserEditProductsScreen.routeName);
             },
           ),
         ],
