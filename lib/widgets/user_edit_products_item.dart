@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../const_data.dart';
 
-class EditProductItem extends StatelessWidget {
-  const EditProductItem(
+class UserProductItem extends StatelessWidget {
+  const UserProductItem(
       {super.key, required this.title, required this.imageUrl});
   final String title;
   final String imageUrl;

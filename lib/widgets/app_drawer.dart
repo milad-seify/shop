@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/orders_detail_screen.dart';
-import '../screens/user_edit_products_screen.dart';
+import '../screens/user_Manage_products_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -41,7 +41,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text('edit'),
             onTap: () {
               Navigator.of(context)
-                  .popAndPushNamed(UserEditProductsScreen.routeName);
+                  .popAndPushNamed(UserManageProductsScreen.routeName);
             },
           ),
         ],
