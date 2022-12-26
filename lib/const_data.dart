@@ -6,6 +6,7 @@ const RoundedRectangleBorder shapeCard = RoundedRectangleBorder(
     topRight: Radius.circular(20.0),
   ),
   side: BorderSide(
+    width: 2,
     color: Colors.blueGrey,
     strokeAlign: StrokeAlign.outside,
   ),

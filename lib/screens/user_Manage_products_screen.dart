@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/products_provider.dart';
-import '../widgets/user_edit_products_item.dart';
+import '../widgets/user_manage_products_item.dart';
 import '../widgets/app_drawer.dart';
 import '../screens/edit_products_screen.dart';
 
@@ -33,6 +33,7 @@ class UserManageProductsScreen extends StatelessWidget {
             itemBuilder: (cxt, i) => Column(
                   children: [
                     UserProductItem(
+                        id: productItems[i].id,
                         title: productItems[i].title,
                         imageUrl: productItems[i].imageUrl),
                     const Divider(),
