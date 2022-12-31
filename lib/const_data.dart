@@ -32,3 +32,19 @@ RoundedRectangleBorder snackBarShape = RoundedRectangleBorder(
     topRight: Radius.circular(30.0),
   ),
 );
+
+InputDecoration textFormFieldEdit = const InputDecoration(
+    //  labelText: 'Title',
+    errorStyle: TextStyle(letterSpacing: 3),
+    hintText: 'Enter Name of Your Product',
+    // border: OutlineInputBorder(
+    //   borderRadius: BorderRadius.all(Radius.circular(15)),
+    // ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.teal),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide:
+          BorderSide(width: 3, color: Color.fromARGB(255, 100, 168, 201)),
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+    ));

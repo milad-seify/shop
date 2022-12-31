@@ -47,15 +47,15 @@ class MyApp extends StatelessWidget {
             ),
             textTheme: const TextTheme(
               subtitle1: TextStyle(
+                color: Colors.black,
+                fontSize: 12.0,
+                overflow: TextOverflow.fade,
+              ),
+              subtitle2: TextStyle(
                 fontFamily: 'Anton',
                 color: Colors.white,
                 fontSize: 12.0,
                 decoration: TextDecoration.underline,
-                overflow: TextOverflow.fade,
-              ),
-              subtitle2: TextStyle(
-                color: Colors.black,
-                fontSize: 12.0,
                 overflow: TextOverflow.fade,
               ),
             ),

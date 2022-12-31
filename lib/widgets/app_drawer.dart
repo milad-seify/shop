@@ -38,7 +38,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.payment),
-            title: const Text('edit'),
+            title: const Text('Manage Product'),
             onTap: () {
               Navigator.of(context)
                   .popAndPushNamed(UserManageProductsScreen.routeName);
