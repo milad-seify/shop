@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
+
+import 'products_provider.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -16,9 +21,32 @@ class Product with ChangeNotifier {
     required this.price,
     required this.isFavorite,
   });
+  void _setFav(bool newValue) {
+    isFavorite = newValue;
+    notifyListeners();
+  }
 
-  void toggleFavoriteStatus() {
+  Future<void> toggleFavoriteStatus() async {
+    final bool oldFav = isFavorite;
+
     isFavorite = !isFavorite;
     notifyListeners();
+
+    try {
+      final url = Uri.parse(
+          'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+
+      final response = await http.patch(
+        url,
+        body: json.encode({'isFavorite': isFavorite}),
+      );
+      print(response.statusCode);
+      if (response.statusCode >= 400) {
+        _setFav(oldFav);
+      }
+    } catch (error) {
+      _setFav(oldFav);
+      rethrow;
+    }
   }
 }

@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../models/http_exception.dart';
 
 import 'product.dart';
+
+final url = Uri.parse(
+    'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json');
 
 class ProductsProvider with ChangeNotifier {
   List<Product> _items = [
@@ -73,13 +77,47 @@ class ProductsProvider with ChangeNotifier {
     return item.firstWhere((i) => i.id == id);
   }
 
+  Future<void> fetchAndSetProduct() async {
+    try {
+      final response = await http.get(url);
+      final extractData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadingProduct = [];
+      if (extractData == null) {
+        return;
+      }
+      extractData.forEach((key, value) {
+        loadingProduct.add(Product(
+            id: key,
+            title: value['title'],
+            description: value['description'],
+            imageUrl: value['imageUrl'],
+            price: value['price'],
+            isFavorite: value['isFavorite']));
+      });
+
+      for (int i = 0; i < _items.length; i++) {
+        for (int j = 0; j < loadingProduct.length; j++) {
+          if (_items[i].id == loadingProduct[j].id) {
+            loadingProduct.removeAt(j);
+          }
+        }
+      }
+      _items.addAll(loadingProduct);
+      notifyListeners();
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  bool checkExistingProduct() {
+    return true;
+  }
+
   Future<void> addProduct(Product product) async {
     // final url = Uri.https(
     //     'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app',
     //     '/products.json');
 
-    final url = Uri.parse(
-        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json');
     try {
       final response = await http.post(
         url,
@@ -137,10 +175,23 @@ class ProductsProvider with ChangeNotifier {
     // });
   }
 
-  void updateProduct(String id, Product updateProduct) {
+  Future<void> updateProduct(String id, Product updateProduct) async {
     final indexOfProduct = _items.indexWhere((element) => element.id == id);
     if (indexOfProduct >= 0) {
-      _items[indexOfProduct] = updateProduct;
+      try {
+        final url = Uri.parse(
+            'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        await http.patch(url,
+            body: json.encode({
+              'title': updateProduct.title,
+              'description': updateProduct.description,
+              'imageUrl': updateProduct.imageUrl,
+              'price': updateProduct.price,
+            }));
+        _items[indexOfProduct] = updateProduct;
+      } catch (error) {
+        rethrow;
+      }
     } else {
       print('something wrong');
     }
@@ -148,9 +199,23 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = Uri.parse(
+        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+    final existingIndexProduct =
+        _items.indexWhere((element) => element.id == id);
+    Product? existingProduct = _items[existingIndexProduct];
+    _items.removeAt(existingIndexProduct);
     notifyListeners();
+    final response = await http.delete(url);
+    print(response.statusCode);
+    if (response.statusCode >= 400) {
+      _items.insert(existingIndexProduct, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete product.');
+    } //If we have a problem, the continuation of the code will not be executed
+
+    existingProduct = null;
   }
 
   String imageUrl(String title) {

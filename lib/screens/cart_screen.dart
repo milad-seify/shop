@@ -43,25 +43,7 @@ class CartScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(11.0),
                 ),
                 const SizedBox(width: 5.0),
-                TextButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all(3.0),
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.amber.shade200),
-                    shape: MaterialStateProperty.all(
-                      borderCartScreen,
-                    ),
-                  ),
-                  onPressed: () {
-                    Provider.of<Orders>(context, listen: false).addOrder(
-                      cart.cartItems.values.toList(),
-                      cart.totalAmount,
-                    );
-
-                    cart.clear();
-                  },
-                  child: const Text('ORDER NOW'),
-                ),
+                OrderButton(cart: cart),
                 const SizedBox(width: 6.0)
               ],
             ),
@@ -87,6 +69,56 @@ class CartScreen extends StatelessWidget {
           //TODO : go to payment page
         },
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  bool _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        elevation: MaterialStateProperty.all(3.0),
+        backgroundColor: MaterialStateProperty.all(Colors.amber.shade200),
+        shape: MaterialStateProperty.all(
+          borderCartScreen,
+        ),
+      ),
+      onPressed: (widget.cart.cardItemsLength <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addOrder(
+                widget.cart.cartItems.values.toList(),
+                widget.cart.totalAmount,
+              );
+              setState(() {
+                _isLoading = false;
+              });
+
+              widget.cart.clear();
+            },
+      child: _isLoading
+          ? const CircularProgressIndicator.adaptive(
+              backgroundColor: Colors.teal,
+              //strokeWidth: 50,
+            )
+          : const Text('ORDER NOW'),
     );
   }
 }

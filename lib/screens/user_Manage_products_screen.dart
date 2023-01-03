@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,11 @@ class UserManageProductsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final productItems = Provider.of<ProductsProvider>(context).item;
 
+    Future<void> _refreshProducts(BuildContext context) async {
+      await Provider.of<ProductsProvider>(context, listen: false)
+          .fetchAndSetProduct();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Product'),
@@ -26,19 +33,22 @@ class UserManageProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(9),
-        child: ListView.builder(
-            itemCount: productItems.length,
-            itemBuilder: (cxt, i) => Column(
-                  children: [
-                    UserProductItem(
-                        id: productItems[i].id,
-                        title: productItems[i].title,
-                        imageUrl: productItems[i].imageUrl),
-                    const Divider(),
-                  ],
-                )),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: Padding(
+          padding: const EdgeInsets.all(9),
+          child: ListView.builder(
+              itemCount: productItems.length,
+              itemBuilder: (cxt, i) => Column(
+                    children: [
+                      UserProductItem(
+                          id: productItems[i].id,
+                          title: productItems[i].title,
+                          imageUrl: productItems[i].imageUrl),
+                      const Divider(),
+                    ],
+                  )),
+        ),
       ),
     );
   }

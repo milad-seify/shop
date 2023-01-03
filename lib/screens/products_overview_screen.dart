@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import 'package:provider/provider.dart';
-// import 'package:shop/provider/products_provider.dart';
 
+import '../provider/products_provider.dart';
 import '../const_data.dart';
 import '../widgets/products_gridview.dart';
 import './cart_screen.dart';
@@ -21,6 +20,36 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _faveProduct = false;
+  bool _initCheck = true;
+  bool _loading = false;
+  @override
+  void initState() {
+    //if you add listen:false you can use this  in initState()
+    /* Provider.of<ProductsProvider>(context, listen: false).fetchAndSetProduct();
+    or
+      Future.delayed(Duration.zero).then((_) {
+      Provider.of<ProductsProvider>(context)
+          .fetchAndSetProduct();
+    });*/
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_initCheck) {
+      setState(() {
+        _loading = true;
+      });
+      //TODO : use try catch or catch error
+      Provider.of<ProductsProvider>(context).fetchAndSetProduct().then((value) {
+        setState(() {
+          _loading = false;
+        });
+      });
+    }
+    _initCheck = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +109,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       drawer: const AppDrawer(),
       // bottomSheet:
       //     BottomSheet(onClosing: () {}, builder: ((context) => ))),
-      body: ProductsGridView(filterProduct: _faveProduct),
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator.adaptive(),
+            )
+          : ProductsGridView(filterProduct: _faveProduct),
     );
   }
 }
+
+// Opacity(
+//   opacity: _visible ? 1.0 : 0.0,
+//   child: Text("Text!"),
+// )
+//It is better to use Visibility  widget  

@@ -98,37 +98,47 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
     });
     _form.currentState!.save();
     if (_editedProducts.id != 'null') {
-      Provider.of<ProductsProvider>(context, listen: false)
-          .updateProduct(_editedProducts.id, _editedProducts);
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+      try {
+        await Provider.of<ProductsProvider>(context, listen: false)
+            .updateProduct(_editedProducts.id, _editedProducts);
+      } catch (onError) {
+        await showDialogSave(onError);
+      }
     } else {
       try {
         await Provider.of<ProductsProvider>(context, listen: false)
             .addProduct(_editedProducts);
         // .catchError((onError) {
       } catch (onError) {
-        await showDialog<Null>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text(' An error occurred'),
-                  /* The cause of the error should not be displayed to the user, here we have done this for testing*/
-                  content: Text(onError.toString()),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Okay'))
-                  ],
-                ));
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
+        await showDialogSave(onError);
       }
+      // finally {
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   Navigator.of(context).pop();
+      // }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
+  }
+
+//Don’t use helper functions for rendering UI
+  Future<Null?> showDialogSave(Object onError) {
+    return showDialog<Null>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: const Text(' An error occurred'),
+              /* The cause of the error should not be displayed to the user, here we have done this for testing*/
+              content: Text(onError.toString()),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Okay'))
+              ],
+            ));
   }
 
   @override
@@ -199,7 +209,7 @@ class _EditProductsScreenState extends State<EditProductsScreen> {
                           onSaved: (newValue) {
                             _editedProducts = Product(
                                 id: _editedProducts.id,
-                                title: _editedProducts.title!,
+                                title: _editedProducts.title,
                                 description: _editedProducts.description,
                                 imageUrl: _editedProducts.imageUrl,
                                 price: double.parse(newValue!),

@@ -14,6 +14,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
+    //final scaffold = ScaffoldMessenger.of(context);
     return Card(
       //for only border radius use cliprrect
       elevation: 6.0,
@@ -33,6 +34,10 @@ class ProductItem extends StatelessWidget {
                     color: Theme.of(context).colorScheme.tertiary,
                     onPressed: () {
                       product.toggleFavoriteStatus();
+                      // .catchError(
+                      //       (onError) => scaffold.showSnackBar(
+                      //           SnackBar(content: Text('something missing'))),
+                      //     );
                     },
                   )),
               //child: You can add whats u need in this widget thats Never Change , like TextWidget for title somewhere,this is a tiny optimization

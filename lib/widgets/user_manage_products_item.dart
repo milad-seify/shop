@@ -16,6 +16,8 @@ class UserProductItem extends StatelessWidget {
   final String imageUrl;
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+
     Provider.of<ProductsProvider>(context);
     return ListTile(
       tileColor: Colors.teal.shade200,
@@ -45,16 +47,6 @@ class UserProductItem extends StatelessWidget {
           children: [
             IconButton(
               icon: Icon(
-                Icons.delete,
-                color: Theme.of(context).errorColor,
-              ),
-              onPressed: () {
-                Provider.of<ProductsProvider>(context, listen: false)
-                    .deleteProduct(id);
-              },
-            ),
-            IconButton(
-              icon: Icon(
                 Icons.edit,
                 color: Theme.of(context).primaryColor,
               ),
@@ -62,7 +54,23 @@ class UserProductItem extends StatelessWidget {
                 Navigator.of(context)
                     .pushNamed(EditProductsScreen.routeName, arguments: id);
               },
-            )
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Theme.of(context).errorColor,
+              ),
+              onPressed: () async {
+                try {
+                  await Provider.of<ProductsProvider>(context, listen: false)
+                      .deleteProduct(id);
+                } catch (error) {
+                  scaffold.showSnackBar(const SnackBar(
+                    content: Text('product can\'t delete'),
+                  ));
+                }
+              },
+            ),
           ],
         ),
       ),
