@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/provider/cart.dart';
 
+import '../provider/auth.dart';
 import '../provider/product.dart';
 import '../screens/product_detail_screen.dart';
 import 'image_url_show.dart';
@@ -14,6 +15,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
+    final authData = Provider.of<Auth>(context, listen: false);
     //final scaffold = ScaffoldMessenger.of(context);
     return Card(
       //for only border radius use cliprrect
@@ -33,7 +35,8 @@ class ProductItem extends StatelessWidget {
                         : Icons.favorite_border),
                     color: Theme.of(context).colorScheme.tertiary,
                     onPressed: () {
-                      product.toggleFavoriteStatus();
+                      product.toggleFavoriteStatus(
+                          authData.token, authData.userId);
                       // .catchError(
                       //       (onError) => scaffold.showSnackBar(
                       //           SnackBar(content: Text('something missing'))),
@@ -46,7 +49,7 @@ class ProductItem extends StatelessWidget {
               product.title,
               textAlign: TextAlign.center,
               softWrap: true,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.subtitle2,
             ),
             trailing: IconButton(
               tooltip: 'Add to Your Cart',

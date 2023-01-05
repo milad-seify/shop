@@ -6,47 +6,32 @@ import '../models/http_exception.dart';
 
 import 'product.dart';
 
-final url = Uri.parse(
-    'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json');
-
 class ProductsProvider with ChangeNotifier {
+  //ProductsProvider();
+  final String authToken;
+  final String userId;
+
+  ProductsProvider(
+    this.userId,
+    this.authToken,
+    this._items,
+  );
+
+// Anything that is placed on the right hand side of the colon (:) has no access to this.
+  ProductsProvider.initialProxy()
+      : authToken = 'null',
+        userId = 'null';
+
   List<Product> _items = [
-    Product(
-      id: 'p1',
-      title: 'Red Shirt',
-      description: 'A red shirt - it is pretty red!',
-      price: 29.99,
-      imageUrl:
-          'https://www.iranpooshak.com/wp-content/uploads/2019/07/x-1.jpg',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p2',
-      title: 'Trousers',
-      description: 'A nice pair of trousers.',
-      price: 59.99,
-      imageUrl:
-          'https://titigoll.com/wp-content/uploads/2022/02/photo_2022-02-08_10-29-11.webp',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p3',
-      title: 'Yellow Scarf',
-      description: 'Warm and cozy - exactly what you need for the winter.',
-      price: 19.99,
-      imageUrl:
-          'https://www.tiesplanet.com/images/plain-golden-yellow-chiffon-scarf-p13534-32997_medium.jpg',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p4',
-      title: 'A Pan',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-      isFavorite: false,
-    ),
+    // Product(
+    //   id: 'p4',
+    //   title: 'A Pan',
+    //   description: 'Prepare any meal you want.',
+    //   price: 49.99,
+    //   imageUrl:
+    //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
+    //   isFavorite: false,
+    // ),
   ];
 
   // bool _showFavoritesOnly = false;
@@ -63,21 +48,16 @@ class ProductsProvider with ChangeNotifier {
     return _items.where((proFave) => proFave.isFavorite).toList();
   }
 
-  // void favoritesProductsFilter() {
-  //   _showFavoritesOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void allProductsFilter() {
-  //   _showFavoritesOnly = false;
-  //   notifyListeners();
-  // }
-
   Product findById(String id) {
     return item.firstWhere((i) => i.id == id);
   }
 
-  Future<void> fetchAndSetProduct() async {
+  Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+//'orderBy=%22creatorId%22&equalTo=%22$userId%22'
+    var url = Uri.parse(
+        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&orderBy="creatorId"&equalTo="$userId"');
     try {
       final response = await http.get(url);
       final extractData = json.decode(response.body) as Map<String, dynamic>;
@@ -85,6 +65,14 @@ class ProductsProvider with ChangeNotifier {
       if (extractData == null) {
         return;
       }
+      if (extractData['error'] != null) {
+        throw HttpException(extractData['error']['message']);
+      }
+      url = Uri.parse(
+          'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/userFavorite/$userId.json?auth=$authToken');
+      final favResponse = await http.get(url);
+      final favoriteData = json.decode(favResponse.body);
+
       extractData.forEach((key, value) {
         loadingProduct.add(Product(
             id: key,
@@ -92,7 +80,9 @@ class ProductsProvider with ChangeNotifier {
             description: value['description'],
             imageUrl: value['imageUrl'],
             price: value['price'],
-            isFavorite: value['isFavorite']));
+            isFavorite: favoriteData[key] == null
+                ? false
+                : favoriteData[key] ?? false));
       });
 
       for (int i = 0; i < _items.length; i++) {
@@ -105,6 +95,7 @@ class ProductsProvider with ChangeNotifier {
       _items.addAll(loadingProduct);
       notifyListeners();
     } catch (error) {
+      print(error);
       rethrow;
     }
   }
@@ -117,6 +108,8 @@ class ProductsProvider with ChangeNotifier {
     // final url = Uri.https(
     //     'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app',
     //     '/products.json');
+    final url = Uri.parse(
+        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
 
     try {
       final response = await http.post(
@@ -126,7 +119,7 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
+          'creatorId': userId,
         }),
       );
       print(json.decode(response.body)['name']);
@@ -180,7 +173,7 @@ class ProductsProvider with ChangeNotifier {
     if (indexOfProduct >= 0) {
       try {
         final url = Uri.parse(
-            'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+            'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
         await http.patch(url,
             body: json.encode({
               'title': updateProduct.title,
@@ -201,7 +194,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
     final existingIndexProduct =
         _items.indexWhere((element) => element.id == id);
     Product? existingProduct = _items[existingIndexProduct];
@@ -228,3 +221,13 @@ class ProductsProvider with ChangeNotifier {
     return 'Image Url Can\'t Find';
   }
 }
+
+  // void favoritesProductsFilter() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void allProductsFilter() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }

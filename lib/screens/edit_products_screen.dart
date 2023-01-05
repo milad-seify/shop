@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../const_data.dart';
 import '../provider/product.dart';
-import '../provider/products_provider.dart';
+import '../provider/products.dart';
 
 /* For short lists/ portrait-only apps, where only minimal scrolling might be needed, a ListView should be fine, since items won't scroll that far out of view (ListView has a certain threshold until which it will keep items in memory).
 But for longer lists or apps that should work in landscape mode as well - or maybe just to be safe - you might want to use a Column (combined with SingleChildScrollView) instead. Since SingleChildScrollView doesn't clear widgets that scroll out of view, you are not in danger of losing user input in that case. */

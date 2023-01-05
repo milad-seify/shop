@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/const_data.dart';
-import 'package:shop/provider/products_provider.dart';
+import 'package:shop/provider/products.dart';
 import 'package:shop/widgets/image_url_show.dart';
 
 import '../provider/orders.dart' as orItem;

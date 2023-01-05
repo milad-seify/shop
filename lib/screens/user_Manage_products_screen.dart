@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/products_provider.dart';
+import '../provider/products.dart';
 import '../widgets/user_manage_products_item.dart';
 import '../widgets/app_drawer.dart';
 import '../screens/edit_products_screen.dart';
@@ -12,14 +12,14 @@ class UserManageProductsScreen extends StatelessWidget {
   static const String routeName = './user_edit_products_screen';
   const UserManageProductsScreen({super.key});
 
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<ProductsProvider>(context, listen: false)
+        .fetchAndSetProduct(true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final productItems = Provider.of<ProductsProvider>(context).item;
-
-    Future<void> _refreshProducts(BuildContext context) async {
-      await Provider.of<ProductsProvider>(context, listen: false)
-          .fetchAndSetProduct();
-    }
+    //  final productItems = Provider.of<ProductsProvider>(context).item;
 
     return Scaffold(
       appBar: AppBar(
@@ -33,22 +33,32 @@ class UserManageProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: const AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: const EdgeInsets.all(9),
-          child: ListView.builder(
-              itemCount: productItems.length,
-              itemBuilder: (cxt, i) => Column(
-                    children: [
-                      UserProductItem(
-                          id: productItems[i].id,
-                          title: productItems[i].title,
-                          imageUrl: productItems[i].imageUrl),
-                      const Divider(),
-                    ],
-                  )),
-        ),
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? const Center(
+                child: CircularProgressIndicator.adaptive(),
+              )
+            : RefreshIndicator(
+                onRefresh: () => _refreshProducts(context),
+                child: Consumer<ProductsProvider>(
+                  builder: (ctx, productItems, _) => Padding(
+                    padding: const EdgeInsets.all(9),
+                    child: ListView.builder(
+                        itemCount: productItems.item.length,
+                        itemBuilder: (cxt, i) => Column(
+                              children: [
+                                UserProductItem(
+                                    id: productItems.item[i].id,
+                                    title: productItems.item[i].title,
+                                    imageUrl: productItems.item[i].imageUrl),
+                                const Divider(),
+                              ],
+                            )),
+                  ),
+                ),
+              ),
       ),
     );
   }

@@ -48,3 +48,40 @@ InputDecoration textFormFieldEdit = const InputDecoration(
           BorderSide(width: 3, color: Color.fromARGB(255, 100, 168, 201)),
       borderRadius: BorderRadius.all(Radius.circular(15)),
     ));
+
+ButtonStyle authCardBTN = ButtonStyle(
+  elevation: MaterialStateProperty.all(5.0),
+  shape: MaterialStateProperty.all(
+    RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+        side: const BorderSide(color: Colors.deepOrange, width: 2.0)),
+  ),
+  padding: MaterialStateProperty.all(
+    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4.0),
+  ),
+  backgroundColor: MaterialStateProperty.all(
+    Colors.black.withOpacity(0.7),
+  ),
+  textStyle: MaterialStateProperty.all(const TextStyle(
+    color: Colors.white,
+    //  backgroundColor: Colors.amber,
+  )),
+);
+
+void errorDialogBox(BuildContext context, String errorMessage) {
+  showDialog(
+    context: context,
+    builder: ((ctx) => AlertDialog(
+          title: const Text('ERROR'),
+          content: Text(errorMessage),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.check),
+            )
+          ],
+        )),
+  );
+}

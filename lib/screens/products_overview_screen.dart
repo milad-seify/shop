@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/models/http_exception.dart';
 
-import '../provider/products_provider.dart';
+import '../provider/products.dart';
 import '../const_data.dart';
 import '../widgets/products_gridview.dart';
 import './cart_screen.dart';
@@ -12,6 +13,7 @@ import '../widgets/app_drawer.dart';
 enum FiltersOptions { favoritesOnly, all }
 
 class ProductsOverviewScreen extends StatefulWidget {
+  static const String routeName = '/product-overview-screen';
   const ProductsOverviewScreen({super.key});
 
   @override
@@ -40,15 +42,25 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       setState(() {
         _loading = true;
       });
-      //TODO : use try catch or catch error
-      Provider.of<ProductsProvider>(context).fetchAndSetProduct().then((value) {
+      fetchAndSet(context).then((value) {
         setState(() {
           _loading = false;
         });
       });
+
+      _initCheck = false;
+      super.didChangeDependencies();
     }
-    _initCheck = false;
-    super.didChangeDependencies();
+  }
+
+  Future<void> fetchAndSet(BuildContext context) async {
+    try {
+      await Provider.of<ProductsProvider>(context).fetchAndSetProduct();
+    } on HttpException catch (error) {
+      errorDialogBox(context, error.toString());
+    } catch (error) {
+      errorDialogBox(context, error.toString());
+    }
   }
 
   @override
@@ -121,5 +133,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 // Opacity(
 //   opacity: _visible ? 1.0 : 0.0,
 //   child: Text("Text!"),
+
 // )
 //It is better to use Visibility  widget  
