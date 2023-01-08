@@ -53,13 +53,24 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
-    final filterString =
-        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    print(filterByUser);
+    // String filterString =
+    //     filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
 //'orderBy=%22creatorId%22&equalTo=%22$userId%22'
+
     var url = Uri.parse(
-        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&orderBy="creatorId"&equalTo="$userId"');
+        'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
+    if (filterByUser) {
+      url = Uri.parse(
+          'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&orderBy="creatorId"&equalTo="$userId"');
+      _items = [];
+    }
+
+    // final response1 = await http.get(url);
+    // print(json.decode(response1.body));
     try {
       final response = await http.get(url);
+      print(json.decode(response.body));
       final extractData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadingProduct = [];
       if (extractData == null) {

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/provider/auth.dart';
 
 import './provider/cart.dart';
+import './screens/splash_screen.dart';
 import 'provider/orders.dart';
 import './screens/product_detail_screen.dart';
 import 'provider/products.dart';
@@ -41,9 +42,11 @@ class MyApp extends StatelessWidget {
           value: Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          create: ((context) => Orders('null', [])),
+          create: ((context) => Orders('null', 'null', [])),
           update: ((context, auth, previousOrders) => Orders(
-              auth.token, previousOrders == null ? [] : previousOrders.orders)),
+              auth.token,
+              auth.userId,
+              previousOrders == null ? [] : previousOrders.orders)),
         ),
       ],
       child: Consumer<Auth>(
@@ -75,7 +78,14 @@ class MyApp extends StatelessWidget {
               ),
               scaffoldBackgroundColor: const Color.fromARGB(255, 207, 228, 226),
               appBarTheme: const AppBarTheme(color: Colors.teal)),
-          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          home: auth.isAuth
+              ? ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (ctx, authSnapShot) =>
+                      authSnapShot.connectionState == ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen()),
           // const ProductsOverviewScreen()
           routes: {
             ProductDetailScreen.routeName: (context) =>
@@ -84,10 +94,11 @@ class MyApp extends StatelessWidget {
             OrdersScreen.routeName: (context) => const OrdersScreen(),
             UserManageProductsScreen.routeName: (context) =>
                 const UserManageProductsScreen(),
-            EditProductsScreen.routeName: (context) => EditProductsScreen(),
-            // AuthScreen.routeName : (context) => AuthScreen(),
+            EditProductsScreen.routeName: (context) =>
+                const EditProductsScreen(),
+            AuthScreen.routeName: (context) => const AuthScreen(),
             ProductsOverviewScreen.routeName: (context) =>
-                ProductsOverviewScreen(),
+                const ProductsOverviewScreen(),
           },
         ),
       ),
