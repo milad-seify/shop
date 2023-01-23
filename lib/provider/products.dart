@@ -7,7 +7,6 @@ import '../models/http_exception.dart';
 import 'product.dart';
 
 class ProductsProvider with ChangeNotifier {
-  //ProductsProvider();
   final String authToken;
   final String userId;
 
@@ -34,14 +33,8 @@ class ProductsProvider with ChangeNotifier {
     // ),
   ];
 
-  // bool _showFavoritesOnly = false;
-
   List<Product> get item {
-    // if (_showFavoritesOnly) {
-    //   return _items.where((product) => product.isFavorite).toList();
-    // } else {
     return [..._items];
-    // }
   }
 
   List<Product> get favoritesItem {
@@ -53,7 +46,6 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProduct([bool filterByUser = false]) async {
-    print(filterByUser);
     // String filterString =
     //     filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
 //'orderBy=%22creatorId%22&equalTo=%22$userId%22'
@@ -66,11 +58,8 @@ class ProductsProvider with ChangeNotifier {
       _items = [];
     }
 
-    // final response1 = await http.get(url);
-    // print(json.decode(response1.body));
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
       final extractData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadingProduct = [];
       if (extractData == null) {
@@ -116,9 +105,6 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    // final url = Uri.https(
-    //     'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app',
-    //     '/products.json');
     final url = Uri.parse(
         'https://shop-9862d-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
 
@@ -133,7 +119,6 @@ class ProductsProvider with ChangeNotifier {
           'creatorId': userId,
         }),
       );
-      print(json.decode(response.body)['name']);
 
       final newProduct = Product(
           id: json.decode(response.body)['name'],

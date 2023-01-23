@@ -1,14 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../const_data.dart';
 import '../models/http_exception.dart';
 import '../provider/auth.dart';
-import '../screens/auth_screen.dart';
-import '../const_data.dart';
-import '../screens/products_overview_screen.dart';
+
+enum AuthMode { Signup, Login }
 
 class AuthCard extends StatefulWidget {
   const AuthCard({super.key});
@@ -17,33 +14,75 @@ class AuthCard extends StatefulWidget {
   State<AuthCard> createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
-  Map<String, String> _authData = {
+  final Map<String, String> _authData = {
     'email': '',
     'password': '',
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  late AnimationController _animationController;
+  late Animation<double> _opacityAnimation;
+  late Animation<Offset> _slideAnimation;
+//  late Animation<Size> _heightContainerAnimation;
+  @override
+  void initState() {
+    _animationHandel();
+    super.initState();
+  }
 
-// void _errorDialogBox( String errorMessage) {
-//   showDialog(
-//     context: context,
-//     builder: ((ctx) => AlertDialog(
-//           title: const Text('ERROR'),
-//           content: Text(errorMessage),
-//           actions: [
-//             IconButton(
-//               onPressed: () {
-//                 Navigator.of(context).pop();
-//               },
-//               icon: const Icon(Icons.check),
-//             )
-//           ],
-//         )),
-//   );
-// }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _animationHandel() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+          parent: _animationController, curve: Curves.fastOutSlowIn),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(3.0, -3.0),
+      end: const Offset(0.0, 0.0),
+    ).animate(
+      CurvedAnimation(
+          parent: _animationController, curve: Curves.linearToEaseOut),
+    );
+    // _heightContainerAnimation = Tween<Size>(
+    //   begin: const Size(double.infinity, 280),
+    //   end: const Size(double.infinity, 360),
+    // ).animate(
+    //   CurvedAnimation(
+    //       parent: _animationController, curve: Curves.fastOutSlowIn),
+    // );
+//By using Animation Builder, only the part we want changes, and Listener is not suitable here because our entire page is rebuilt.
+    // Animation.addListener(() {
+    //   setState(() {});
+    // });
+  }
+
+  void _switchAuthMode() {
+    if (_authMode == AuthMode.Login) {
+      setState(() {
+        _authMode = AuthMode.Signup;
+      });
+      _animationController.forward();
+    } else {
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
+      _animationController.reverse();
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) {
       // Invalid!
@@ -102,18 +141,6 @@ class _AuthCardState extends State<AuthCard> {
     });
   }
 
-  void _switchAuthMode() {
-    if (_authMode == AuthMode.Login) {
-      setState(() {
-        _authMode = AuthMode.Signup;
-      });
-    } else {
-      setState(() {
-        _authMode = AuthMode.Login;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -127,15 +154,25 @@ class _AuthCardState extends State<AuthCard> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 10.0,
-      child: Container(
-        height: _authMode == AuthMode.Signup
-            ? deviceSize.height - 300
-            : deviceSize.height - 390,
-        constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 380 : 260),
+
+      // AnimatedBuilder(
+      //   animation: Animation,
+      //   builder: (context, notChange) =>
+      //use AnimatedContainer this widget handel all.
+      child: AnimatedContainer(
+        padding: const EdgeInsets.all(7.0),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.fastOutSlowIn,
         width: deviceSize.width * 0.75,
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
+        height: _authMode == AuthMode.Signup ? 360 : 280,
+        // height: Animation.value.height,
+        constraints:
+            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 360 : 280
+                // minHeight: Animation.value.height,
+                ),
+        child:
+            //noTChange in AnimatedBuilder is child : Form ...this part this part does not rebuild like consumer in provider
+            Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
@@ -155,7 +192,7 @@ class _AuthCardState extends State<AuthCard> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 7.0, bottom: 7.0),
+                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: TextFormField(
                     decoration: textFormFieldEdit.copyWith(
                         labelText: 'Password', hintText: 'Enter Your Password'),
@@ -171,21 +208,35 @@ class _AuthCardState extends State<AuthCard> {
                     },
                   ),
                 ),
-                if (_authMode == AuthMode.Signup)
-                  TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: textFormFieldEdit.copyWith(
-                        labelText: 'Confirm Password',
-                        hintText: 'Enter Your Password'),
-                    obscureText: true,
-                    validator: _authMode == AuthMode.Signup
-                        ? (value) {
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match!';
-                            }
-                          }
-                        : null,
+                //   if (_authMode == AuthMode.Signup)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.fastOutSlowIn,
+                  constraints: BoxConstraints(
+                      maxHeight: _authMode == AuthMode.Signup ? 120 : 0,
+                      minHeight: _authMode == AuthMode.Signup ? 60 : 0),
+                  child: FadeTransition(
+                    opacity: _opacityAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: TextFormField(
+                        enabled: _authMode == AuthMode.Signup,
+                        decoration: textFormFieldEdit.copyWith(
+                            labelText: 'Confirm Password',
+                            hintText: 'Enter Your Password'),
+                        obscureText: true,
+                        validator: _authMode == AuthMode.Signup
+                            ? (value) {
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match!';
+                                }
+                                return null;
+                              }
+                            : null,
+                      ),
+                    ),
                   ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),

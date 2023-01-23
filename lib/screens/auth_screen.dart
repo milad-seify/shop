@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../widgets/auth_card.dart';
 
-enum AuthMode { Signup, Login }
-
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
 

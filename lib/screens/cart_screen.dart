@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/screens/orders_detail_screen.dart';
 
 import '../provider/cart.dart' show Cart;
 import '../const_data.dart';
@@ -65,8 +66,9 @@ class CartScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.payment_outlined),
         onPressed: () {
-          //TODO : go to payment page
+          Navigator.of(context).popAndPushNamed(OrdersScreen.routeName);
         },
       ),
     );
@@ -87,6 +89,7 @@ class OrderButton extends StatefulWidget {
 
 class _OrderButtonState extends State<OrderButton> {
   bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -118,7 +121,9 @@ class _OrderButtonState extends State<OrderButton> {
               backgroundColor: Colors.teal,
               //strokeWidth: 50,
             )
-          : const Text('ORDER NOW'),
+          : const Text(
+              'ORDER NOW',
+            ),
     );
   }
 }

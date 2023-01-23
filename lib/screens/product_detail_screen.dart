@@ -19,44 +19,70 @@ class ProductDetailScreen extends StatelessWidget {
         .findById(productId);
     final cart = Provider.of<Cart>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(title: Text(productDetail.title), actions: [
-        IconButton(
-            onPressed: () {
-              cart.addCartItem(
-                  productId, productDetail.title, productDetail.price);
-            },
-            icon: const Icon(Icons.add))
-      ]),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                margin: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                width: double.infinity,
-                height: 300,
-                child: ImageUrlShow(product: productDetail)),
-            Text(
-              '\$${productDetail.price}',
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 20.0,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                productDetail.title,
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              background: Hero(
+                tag: productDetail.id,
+                child: Image.network(
+                  productDetail.imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            const SizedBox(
-              height: 14.0,
+            //  floating: true,
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    //TODO : CHECK!
+                    cart.addCartItem(
+                        productId, productDetail.title, productDetail.price);
+                  },
+                  icon: const Icon(Icons.add))
+            ],
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Text(
+                  '\$${productDetail.price}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 20.0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 14.0,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  height: 300,
+                  width: double.infinity,
+                  child: Text(
+                    productDetail.description,
+                    textAlign: TextAlign.center,
+                    softWrap: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 800,
+                ),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              height: 300,
-              width: double.infinity,
-              child: Text(
-                productDetail.description,
-                textAlign: TextAlign.center,
-                softWrap: true,
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

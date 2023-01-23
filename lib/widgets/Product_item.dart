@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/provider/cart.dart';
+//import 'package:cached_network_image/cached_network_image.dart';
 
 import '../provider/auth.dart';
 import '../provider/product.dart';
 import '../screens/product_detail_screen.dart';
-import 'image_url_show.dart';
+//import 'image_url_show.dart';
 import '/const_data.dart';
 
 class ProductItem extends StatelessWidget {
@@ -77,7 +78,17 @@ class ProductItem extends StatelessWidget {
           ),
         ),
         child: GestureDetector(
-          child: ImageUrlShow(product: product),
+          // child ;ImageUrlShow(product: product),
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.contain,
+            ),
+          ),
+
           onTap: () => Navigator.of(context)
               .pushNamed(ProductDetailScreen.routeName, arguments: product.id),
         ),
@@ -85,3 +96,23 @@ class ProductItem extends StatelessWidget {
     );
   }
 }
+
+
+
+       //  CachedNetworkImage(
+          //   fit: BoxFit.contain,
+          //   imageUrl: product.imageUrl,
+          //   progressIndicatorBuilder: (context, url, downloadProgress) =>
+          //       CircularProgressIndicator(value: downloadProgress.progress),
+          //   errorWidget: (context, url, error) => const Icon(
+          //     Icons.error,
+          //     color: Colors.red,
+          //   ),
+          // ),
+          
+// CachedNetworkImage(
+//         imageUrl: "http://via.placeholder.com/350x150",
+//         progressIndicatorBuilder: (context, url, downloadProgress) => 
+//                 CircularProgressIndicator(value: downloadProgress.progress),
+//         errorWidget: (context, url, error) => Icon(Icons.error),
+//      ),
