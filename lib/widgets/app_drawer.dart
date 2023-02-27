@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/auth_screen.dart';
 import '../provider/auth.dart';
 import '../screens/orders_detail_screen.dart';
 import '../screens/user_Manage_products_screen.dart';
+import '../helper/custom_route.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -33,6 +33,10 @@ class AppDrawer extends StatelessWidget {
             title: const Text('payment'),
             onTap: () {
               Navigator.of(context).popAndPushNamed(OrdersScreen.routeName);
+
+              // Navigator.of(context).pushReplacement(CustomRoute(
+              //     builder: (context) => OrdersScreen(),
+              //     settings: const RouteSettings()));
             },
           ),
           ListTile(

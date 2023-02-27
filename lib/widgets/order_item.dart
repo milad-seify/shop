@@ -24,64 +24,76 @@ class _OrderItemState extends State<OrderItem> {
   Widget build(BuildContext context) {
     final pro = Provider.of<ProductsProvider>(context);
 
-    return Card(
-      margin: const EdgeInsets.all(10.0),
-      color: Colors.blueGrey,
-      shape: borderCartScreen,
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: Text(
-              '\$ ${widget.order.amount.toStringAsFixed(2)}',
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-            ),
-            subtitle: Text(
-                DateFormat('yyyy/MM/dd   hh:mm').format(widget.order.dateTime)),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
-            ),
-          ),
-          if (_expanded)
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              height: min(widget.order.products.length * 100.0 + 30, 120),
-              decoration: BoxDecoration(color: Colors.black12),
-              child: ListView(
-                  children: widget.order.products
-                      .map(
-                        (ele) => Column(children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ClipOval(
-                                child: SizedBox(
-                                  height: 40.0,
-                                  width: 40.0,
-                                  child: Image.network(
-                                    pro.imageUrl(ele.title),
-                                    fit: BoxFit.contain,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height:
+          _expanded ? min(widget.order.products.length * 100.0 + 110, 200) : 95,
+      child: Card(
+        margin: const EdgeInsets.all(10.0),
+        color: Colors.blueGrey,
+        shape: borderCartScreen,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  '\$ ${widget.order.amount.toStringAsFixed(2)}',
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                ),
+                subtitle: Text(DateFormat('yyyy/MM/dd   hh:mm')
+                    .format(widget.order.dateTime)),
+                trailing: IconButton(
+                  icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                  onPressed: () {
+                    setState(() {
+                      _expanded = !_expanded;
+                    });
+                  },
+                ),
+              ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 5.0),
+                  height: _expanded
+                      ? min(widget.order.products.length * 70.0 + 30, 110)
+                      : 0,
+                  decoration: const BoxDecoration(color: Colors.black12),
+                  child: ListView(
+                      children: widget.order.products
+                          .map(
+                            (ele) => Column(children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ClipOval(
+                                    child: SizedBox(
+                                      height: 40.0,
+                                      width: 40.0,
+                                      child: Image.network(
+                                        pro.imageUrl(ele.title),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  Text(ele.title),
+                                  Text('${ele.quantity} X \$${ele.price}')
+                                ],
                               ),
-                              Text(ele.title),
-                              Text('${ele.quantity} X \$${ele.price}')
-                            ],
-                          ),
-                          const Divider(
-                            thickness: 1.0,
-                            color: Colors.orange,
-                          ),
-                        ]),
-                      )
-                      .toList()),
-            ),
-        ],
+                              const Divider(
+                                thickness: 1.0,
+                                color: Colors.orange,
+                              ),
+                            ]),
+                          )
+                          .toList()),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

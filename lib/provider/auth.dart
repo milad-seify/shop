@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/http_exception.dart';
 
+//for connect to your web server like firebase to save your data , use your apiKey here
 const String apiKey = '';
 
 class Auth with ChangeNotifier {

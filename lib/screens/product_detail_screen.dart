@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 // import '../provider/product.dart';
 import '../provider/products.dart';
 import '../provider/cart.dart';
-import '../widgets/image_url_show.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const String routeName = '/product_detail_screen';
